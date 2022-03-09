@@ -1,0 +1,67 @@
+---
+title: "twitter_project"
+output: html_document
+---
+
+
+## R Markdown
+```{r}
+df <- read.csv("cleaned_tweets.csv")
+```
+
+
+```{r}
+library("tidytext")
+library("tidyverse")
+```
+
+```{r}
+df <- df %>% 
+  unnest_tokens("word","text")
+```
+```{r}
+df
+```
+
+
+
+```{r}
+df_putin <- df %>% 
+  filter(str_detect(hashtags,"Putin") & !str_detect(hashtags,"Zelensky")) 
+```
+
+```{r}
+df_zelen <- df %>% 
+  filter(!str_detect(hashtags,"Putin") & str_detect(hashtags,"Zelensky"))
+```
+```{r}
+df_putin %>% 
+  count(location,word) %>% 
+  group_by(location) %>% 
+  top_n(n,n=10) %>% 
+  arrange(., n) %>% 
+  filter(n>50)
+```
+
+```{r}
+putin_freq <- df_putin %>% 
+  count(word) %>% 
+  top_n(n,n=30) %>% 
+  arrange(n)
+  
+```
+
+```{r}
+zelen_freq <- df_zelen %>% 
+  count(word) %>% 
+  top_n(n,n=30) %>% 
+  arrange(n)
+```
+
+
+```{r}
+write.csv(putin_freq,'putin_freq.csv')
+write.csv(zelen_freq,'zelen_freq.csv')
+```
+
+
