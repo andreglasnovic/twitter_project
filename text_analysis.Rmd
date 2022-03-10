@@ -34,6 +34,7 @@ df_putin <- df %>%
 df_zelen <- df %>% 
   filter(!str_detect(hashtags,"Putin") & str_detect(hashtags,"Zelensky"))
 ```
+
 ```{r}
 df_putin %>% 
   count(location,word) %>% 
@@ -57,11 +58,130 @@ zelen_freq <- df_zelen %>%
   top_n(n,n=30) %>% 
   arrange(n)
 ```
+```{r}
+df_putin_bi <- df_putin %>%
+  unnest_tokens(bigram, text, token = "ngrams", n = 2)
+```
+
+```{r}
+df_zelen_bi <- df_zelen %>%
+  unnest_tokens(bigram, text, token = "ngrams", n = 2)
+```
 
 
 ```{r}
-write.csv(putin_freq,'putin_freq.csv')
-write.csv(zelen_freq,'zelen_freq.csv')
+df_putin_tri <- df_putin %>%
+  unnest_tokens(trigram, text, token = "ngrams", n = 3)
+```
+
+```{r}
+df_zelen_tri <- df_zelen %>%
+  unnest_tokens(trigram, text, token = "ngrams", n = 3)
+```
+
+
+
+
+```{r}
+putin_freq_tri <- df_putin_tri %>% 
+  count(trigram) %>% 
+  top_n(n,n=30) %>% 
+  arrange(n)
+```
+```{r}
+putin_freq_tri %>% 
+  top_n(10) %>% 
+  ggplot(aes(x = trigram,y=n))+
+  geom_col(fill="darkred")+
+  scale_x_reordered()+
+  coord_flip()+
+  scale_color_gradient(low="blue", high="red")+
+  labs(title = "Frequency of 3-grams", subtitle = "#Putin")
+```
+
+```{r}
+zelen_freq_tri <- df_zelen_tri %>% 
+  count(trigram) %>% 
+  top_n(n,n=30) %>% 
+  arrange(n)
+```
+
+```{r}
+zelen_freq_tri %>% 
+  top_n(10) %>% 
+  ggplot(aes(x = trigram,y=n))+
+  geom_col(fill="#F0E442")+
+  scale_x_reordered()+
+  coord_flip()+
+  scale_color_gradient(low="blue", high="red")+
+  labs(title = "Frequency of 3-grams", subtitle = "#Zelensky")
+```
+
+
+```{r}
+zelen_freq_tri %>% 
+  top_n(10) %>% 
+  ggplot(aes(x = trigram,y=n))+
+  geom_col(fill="#E69F00")+
+  scale_x_reordered()+
+  coord_flip()+
+  scale_color_gradient(low="blue", high="red")+
+  labs(title = "Frequency of 3-grams", subtitle = "#Zelensky")
+```
+
+
+
+
+
+
+```{r}
+putin_freq_bi <- df_putin_bi %>% 
+  count(bigram) %>% 
+  top_n(n,n=30) %>% 
+  arrange(n)
+```
+
+```{r}
+zelen_freq_bi <- df_zelen_bi %>% 
+  count(bigram) %>% 
+  top_n(n,n=30) %>% 
+  arrange(n)
+```
+
+```{r}
+zelen_freq_bi %>% 
+  top_n(10) %>% 
+  ggplot(aes(x = bigram,y=n))+
+  geom_col(fill="#56B4E9")+
+  scale_x_reordered()+
+  coord_flip()+
+  scale_color_gradient(low="blue", high="red")+
+  labs(title = "Frequency of bigrams", subtitle = "#Zelensky")
+  
+```
+
+
+
+
+
+```{r}
+putin_freq_bi %>% 
+  top_n(10) %>% 
+  ggplot(aes(x = bigram,y=n, fill = n))+
+  geom_col()+
+  scale_x_reordered()+
+  coord_flip()+
+  labs(title = "Frequency of bigrams", subtitle = "#Putin")
+```
+
+
+```{r}
+putin_freq_bi
+```
+
+```{r}
+write.csv(putin_freq_tri,'putin_freq_tri.csv')
+write.csv(zelen_freq_tri,'zelen_freq_tri.csv')
 ```
 
 
